@@ -11,7 +11,7 @@ namespace ApiRestaurant.Controllers
 {
     [ApiController]
     [Route("api/category")]
-    public class CategoryController:ControllerBase
+    public class CategoryController : ControllerBase
     {
         private readonly AppDbContext _context;
 
@@ -41,12 +41,15 @@ namespace ApiRestaurant.Controllers
 
         // POST: api/Clientes
         [HttpPost]
+        [ProducesResponseType(201)]
         public async Task<IActionResult> Post([FromBody] CategoryDTO categoryObject)
         {
             _context.Categories.Add(new Category { name=categoryObject.name});
-            await _context.SaveChangesAsync();
 
-            return Ok();
+            await _context.SaveChangesAsync();
+            var lastCategory= _context.Categories.ToList().Last();
+
+            return CreatedAtAction(nameof(Post),new ListCategoryDTO { id=lastCategory.id_categoria,name=lastCategory.name});
         }
 
         // PUT: api/Clientes/5
@@ -70,5 +73,17 @@ namespace ApiRestaurant.Controllers
             return NoContent();
         }
 
+        [HttpDelete("{id}")]
+
+        public async Task<IActionResult> Delete(int id)
+        {
+            var category = await _context.Categories.FirstOrDefaultAsync(c => c.id_categoria == id);
+            if (category == null)
+                return NotFound();
+
+            _context.Categories.Remove(category);
+            await _context.SaveChangesAsync();
+            return NoContent();
+        }
     }
 }
