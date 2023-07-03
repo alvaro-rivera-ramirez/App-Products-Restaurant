@@ -6,9 +6,11 @@ using ApiRestaurant.Data;
 using ApiRestaurant.Models;
 using ApiRestaurant.DTO;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ApiRestaurant.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/category")]
     public class CategoryController : ControllerBase
@@ -44,7 +46,7 @@ namespace ApiRestaurant.Controllers
         [ProducesResponseType(201)]
         public async Task<IActionResult> Post([FromBody] CategoryDTO categoryObject)
         {
-            _context.Categories.Add(new Category { name=categoryObject.name});
+            await _context.Categories.AddAsync(new Category { name=categoryObject.name});
 
             await _context.SaveChangesAsync();
             var lastCategory= _context.Categories.ToList().Last();
