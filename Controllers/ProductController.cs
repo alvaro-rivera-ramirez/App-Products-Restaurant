@@ -36,6 +36,7 @@ namespace ApiRestaurant.Controllers
         public async Task<IActionResult> Get(int id)
         {
             var product = await _context.Products.FirstOrDefaultAsync(c => c.id_producto == id);
+
             if (product == null)
                 return NotFound();
 
@@ -46,7 +47,7 @@ namespace ApiRestaurant.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> CreateProduct([FromForm]CreateProductDTO productObject)
+        public async Task<IActionResult> CreateProduct([FromForm] CreateProductDTO productObject)
         {
             if (productObject == null)
             {
@@ -69,7 +70,7 @@ namespace ApiRestaurant.Controllers
             // Guardar los datos en la base de datos
             var product = new Product
             {
-                name=productObject.name,
+                name = productObject.name,
                 description = productObject.description,
                 price = productObject.price,
                 available = productObject.available,
@@ -81,106 +82,6 @@ namespace ApiRestaurant.Controllers
             _context.SaveChanges();
 
             return Ok("Producto creado exitosamente.");
-            // if (string.IsNullOrEmpty(productObject.description))
-            // {
-            //     return BadRequest("El campo description es requerido.");
-            // }
-
-            // Subir el archivo
-            //var fileName = await WriteFile(imageFile, cancellationToken);
-
-            // Verificar si se pudo subir el archivo correctamente
-            // if (string.IsNullOrEmpty(fileName))
-            // {
-            //     return BadRequest("No se pudo subir el archivo.");
-            // }
-
-            // Asociar la ruta del archivo al objeto de producto
-            // productObject.name_file = fileName;
-
-            // Resto del código para crear el producto y guardarlo en la base de datos
-            // var newProduct = new Product
-            // {
-            //     name = productObject.name,
-            //     description = productObject.description,
-            //     price = productObject.price,
-            //     available = productObject.available,
-            //     categoryId = productObject.categoryId,
-            //     name_file = Path.Combine(Directory.GetCurrentDirectory(), "img"), // Asociar la ruta del archivo al objeto de producto
-            // };
-
-            // _context.Products.Add(newProduct);
-            // _context.SaveChanges();
-
-            // var createdProduct = new ProductDTO
-            // {
-            //     id_producto = newProduct.id_producto,
-            //     name = newProduct.name,
-            // };
-
-            // return CreatedAtAction(nameof(CreateProduct), createdProduct);
-        }
-
-        private async Task<string> WriteFile(IFormFile file, CancellationToken cancellationToken)
-        {
-            string filename = "";
-            try
-            {
-                var extension = "." + file.FileName.Split('.')[file.FileName.Split('.').Length - 1];
-                filename = DateTime.Now.Ticks.ToString() + extension;
-
-                var filepath = Path.Combine(Directory.GetCurrentDirectory(), "img");
-
-                if (!Directory.Exists(filepath))
-                {
-                    Directory.CreateDirectory(filepath);
-                }
-
-                var exactpath = Path.Combine(Directory.GetCurrentDirectory(), "img", filename);
-                using (var stream = new FileStream(exactpath, FileMode.Create))
-                {
-                    await file.CopyToAsync(stream, cancellationToken);
-                }
-            }
-            catch (Exception ex)
-            {
-                // Manejar cualquier excepción que pueda ocurrir al subir el archivo
-            }
-            return filename;
-        }
-
-        // PUT: api/Clientes/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody] ProductDTO productObject)
-        {
-            var product = await _context.Products.FirstOrDefaultAsync(c => c.id_producto== id);
-            if (product == null)
-                return NotFound();
-
-            _context.Entry(product).CurrentValues.SetValues(productObject);
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                return BadRequest();
-            }
-
-            return NoContent();
-        }
-
-        [HttpDelete("{id}")]
-
-        public async Task<IActionResult> Delete(int id)
-        {
-            var product = await _context.Products.FirstOrDefaultAsync(c => c.id_producto == id);
-            if (product == null)
-                return NotFound();
-
-            _context.Products.Remove(product);
-            await _context.SaveChangesAsync();
-            return NoContent();
         }
     }
 }
