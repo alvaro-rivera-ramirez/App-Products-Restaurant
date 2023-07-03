@@ -11,6 +11,6 @@ namespace ApiRestaurant.Data
 
         public DbSet<Category> Categories { get; set; }
         public DbSet<Product> Products { get; set; }
-        //public DbSet<Cliente> Clientes { get; set; }
+        public DbSet<User> Users { get; set; }
     }
 }
