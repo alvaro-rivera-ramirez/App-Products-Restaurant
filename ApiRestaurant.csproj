@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Upload\Files\" />
+    <Folder Include="img\" />
   </ItemGroup>
 
 </Project>

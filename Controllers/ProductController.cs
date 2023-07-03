@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using ApiRestaurant.Data;
 using ApiRestaurant.Models;
 using ApiRestaurant.DTO;
+using System.IO;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace ApiRestaurant.Controllers
@@ -51,7 +53,7 @@ namespace ApiRestaurant.Controllers
                 return BadRequest("El objeto productObject es nulo.");
             }
             // Guardar la imagen en el servidor
-            string uploadsFolder = Path.Combine(_environment.WebRootPath, "img");
+            string uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "img");
             if (!Directory.Exists(uploadsFolder))
             {
                 Directory.CreateDirectory(uploadsFolder);
@@ -61,7 +63,7 @@ namespace ApiRestaurant.Controllers
             string filePath = Path.Combine(uploadsFolder, uniqueFileName);
             using (var fileStream = new FileStream(filePath, FileMode.Create))
             {
-                productObject.name_file.CopyTo(fileStream);
+                await productObject.name_file.CopyToAsync(fileStream);
             }
 
             // Guardar los datos en la base de datos
